@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>API Documentation — Pivot Payment Gateway</title>
+  <title>API Documentation — Voltras Pivot Gateway</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,8 +12,8 @@
 
   <!-- ===== SIDEBAR ===== -->
   <nav class="sidebar">
-    <div class="sidebar-title">Pivot Payment Gateway</div>
-    <div class="sidebar-title" style="font-size:10px;padding-top:0;color:#64748b">v1.1.5 · Development</div>
+    <div class="sidebar-title">Voltras Pivot Gateway</div>
+    <div class="sidebar-title" style="font-size:10px;padding-top:0;color:#64748b">10 Juni 2026</div>
 
     <div class="nav-group">
       <div class="nav-group-label">Create VA Payment</div>
@@ -52,9 +52,9 @@
     <div class="doc" id="doc-create-va">
 
       <header class="doc-header" id="va-overview">
-        <div class="tag tag-indigo">POST · v1.1.5</div>
+        <div class="tag tag-indigo">POST · Virtual Account Payment</div>
         <h1>Create Virtual Account Payment</h1>
-        <p>http://172.16.10.51:31015/router</p>
+        <p>[baseUrl]/router</p>
       </header>
 
       <p style="margin-bottom:1.5rem;color:#475569">
@@ -64,12 +64,12 @@
 
       <div class="endpoint-bar">
         <span class="badge-post">POST</span>
-        <span>http://172.16.10.51:31015</span>
+        <span>[baseUrl]</span>
         <span style="color:#94a3b8">/router</span>
       </div>
 
       <div class="note note-indigo">
-        <strong>Base URL development:</strong> http://172.16.10.51:31015 &nbsp;·&nbsp;
+        <strong>Base URL development akan diinfokan lebih lanjut</strong> &nbsp;·&nbsp;
         Gunakan domain <code style="font-family:monospace">"sandbox"</code> untuk environment development.
       </div>
       <br>
@@ -102,7 +102,7 @@
 
       <!-- Request Body -->
       <div class="card" id="va-body">
-        <h2>Request Body — form-data</h2>
+        <h2>Request Body - form-data</h2>
         <table>
           <thead>
             <tr>
@@ -154,7 +154,7 @@
 
       <!-- Parameters -->
       <div class="card" id="va-params">
-        <h2>Parameters — urutan dalam array</h2>
+        <h2>Parameters - urutan dalam array</h2>
         <table>
           <thead>
             <tr>
@@ -170,7 +170,7 @@
               <td class="mono center">0</td>
               <td class="mono">domainName</td>
               <td><span class="type">string</span></td>
-              <td class="muted small">Target domain, petakan 1:1 ke rekening bank. Gunakan "sandbox" untuk dev.</td>
+              <td class="muted small">Domain client. Gunakan "sandbox" untuk development.</td>
               <td class="mono small">"sandbox"</td>
             </tr>
             <tr>
@@ -192,13 +192,14 @@
               <td class="mono">remark</td>
               <td><span class="type">string</span></td>
               <td class="muted small">Teks referensi yang tampil di UI bank (ATM / M-Banking).</td>
-              <td class="mono small">"This is remark"</td>
+              <td class="mono small">"TOP UP SALDO"</td>
             </tr>
             <tr>
               <td class="mono center">4</td>
               <td class="mono">timelimit</td>
               <td><span class="type">string</span></td>
-              <td class="muted small">Batas waktu kedaluwarsa VA. Format: <code style="font-family:monospace">yyyy-MM-dd'T'HH:mm:ss</code></td>
+              <td class="muted small">Batas waktu kedaluwarsa VA. Format: <code
+                  style="font-family:monospace">yyyy-MM-dd'T'HH:mm:ss</code></td>
               <td class="mono small">"2026-06-30T12:00:00"</td>
             </tr>
           </tbody>
@@ -219,7 +220,7 @@
       <!-- Contoh Request -->
       <div class="card" id="va-curl">
         <h2>Contoh Request (cURL)</h2>
-        <pre class="code-block">curl --location 'http://172.16.10.51:31015/router' \
+        <pre class="code-block">curl --location '[baseUrl]/router' \
 --header 'v-api-version: 1.1.5' \
 --form 'request="{
   \"service\": \"transactionService\",
@@ -228,7 +229,7 @@
     \"sandbox\",
     \"Bank Central Asia\",
     10000.0,
-    \"This is remark\",
+    \"TOP UP SALDO\",
     \"2026-06-30T12:00:00\"
   ]
 }"'</pre>
@@ -280,7 +281,8 @@
             <tr>
               <td class="mono">data.bankCode</td>
               <td><span class="type">string</span></td>
-              <td class="muted small">Kode bank. Contoh: <code style="font-family:monospace">"014"</code> untuk BCA.</td>
+              <td class="muted small">Kode bank. Contoh: <code style="font-family:monospace">"014"</code> untuk BCA.
+              </td>
             </tr>
             <tr>
               <td class="mono">data.bankName</td>
@@ -295,7 +297,8 @@
             <tr>
               <td class="mono">data.timelimit</td>
               <td><span class="type">string</span></td>
-              <td class="muted small">Waktu kedaluwarsa VA. Format: <code style="font-family:monospace">yyyy-MM-dd'T'HH:mm:ss</code></td>
+              <td class="muted small">Waktu kedaluwarsa VA. Format: <code
+                  style="font-family:monospace">yyyy-MM-dd'T'HH:mm:ss</code></td>
             </tr>
             <tr>
               <td class="mono">message</td>
@@ -330,7 +333,7 @@
       <header class="doc-header" id="notif-overview">
         <div class="tag tag-cyan">POST · Notification Callback</div>
         <h1>Payment Notification Callback</h1>
-        <p>{Payment Callback URL} — URL dikonfigurasi per domain/client</p>
+        <p>{Payment Callback URL} - URL dikonfigurasi per domain/client</p>
       </header>
 
       <p style="margin-bottom:1.5rem;color:#475569">
@@ -365,7 +368,7 @@
         </div>
         <div class="note note-warn" style="margin-top:0">
           Jika client tidak dapat dijangkau atau melempar exception, Payment Gateway mencatat status
-          <strong>gagal notifikasi</strong> dan tidak melakukan retry otomatis —
+          <strong>gagal notifikasi</strong> dan tidak melakukan retry otomatis -
           pastikan Payment Callback URL selalu tersedia.
         </div>
       </div>
@@ -416,7 +419,8 @@
               <td class="mono center">1</td>
               <td class="mono">transactionId <span class="req">required</span></td>
               <td><span class="type">string</span></td>
-              <td class="muted small">ID unik transaksi. Sesuai dengan <code style="font-family:monospace">orderId</code> pada sisi Payment Gateway.</td>
+              <td class="muted small">ID unik transaksi. Sesuai dengan <code
+                  style="font-family:monospace">orderId</code> pada sisi Payment Gateway.</td>
               <td class="mono small">"TRX-20260609-001"</td>
             </tr>
             <tr>
@@ -433,7 +437,7 @@
 
       <!-- Contoh Request cURL -->
       <div class="card" id="notif-curl">
-        <h2>Contoh Request yang Diterima Client (cURL equivalent)</h2>
+        <h2>Contoh Request yang Diterima Client</h2>
         <pre class="code-block">curl --location --request POST 'https://client.example.com/notify' \
 --header 'v-api-version: 1.1.5' \
 --header 'domain: sandbox' \
@@ -470,7 +474,8 @@
         </table>
         <div class="note note-cyan" style="margin-top:0">
           Jika client melempar exception <code style="font-family:monospace">TransactionNotFound</code> atau exception
-          lainnya, Payment Gateway menangkap exception tersebut dan mencatat hasil notifikasi sebagai <strong>false</strong>.
+          lainnya, Payment Gateway menangkap exception tersebut dan mencatat hasil notifikasi sebagai
+          <strong>false</strong>.
         </div>
       </div>
 
@@ -490,7 +495,8 @@
               <td><span class="status-code s200">200</span></td>
               <td>OK</td>
               <td class="muted small">Request diterima. Body berisi <code style="font-family:monospace">true</code> atau
-                <code style="font-family:monospace">false</code>.</td>
+                <code style="font-family:monospace">false</code>.
+              </td>
             </tr>
             <tr>
               <td><span class="status-code s404">404 / Exception</span></td>
@@ -545,7 +551,7 @@
             </tr>
             <tr>
               <td class="mono small" style="white-space:nowrap">5. Idempotency</td>
-              <td class="muted small">Pastikan endpoint bersifat idempotent — jika notifikasi yang sama diterima lebih
+              <td class="muted small">Pastikan endpoint bersifat idempotent - jika notifikasi yang sama diterima lebih
                 dari sekali, tidak terjadi duplikasi pemrosesan order.</td>
             </tr>
           </tbody>
