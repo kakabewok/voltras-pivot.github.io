@@ -1,8 +1,8 @@
-/* ===== BASE ===== */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: smooth
 }
 
+/* ===== BASE ===== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -165,7 +165,7 @@ header.doc-header p {
   overflow: hidden
 }
 
-.card>h2 {
+.card > h2 {
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
@@ -384,6 +384,68 @@ tr:last-child td {
   color: #94a3b8;
   font-size: 16px;
   flex-shrink: 0
+}
+
+/* ===== COPY BUTTON ===== */
+.code-wrapper {
+  position: relative
+}
+
+.copy-btn {
+  position: absolute;
+  top: .6rem;
+  right: .6rem;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.1);
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+  letter-spacing: .02em
+}
+
+.copy-btn:hover {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+  border-color: rgba(255,255,255,.35)
+}
+
+.copy-btn.copied {
+  background: #166534;
+  color: #bbf7d0;
+  border-color: #166534
+}
+
+/* inline variant for endpoint-bar */
+.copy-btn-inline {
+  position: static;
+  margin-left: auto;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0
+}
+
+.copy-btn-inline:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+  border-color: #cbd5e1
+}
+
+.copy-btn-inline.copied {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #86efac
+}
+
+/* bank badge copy feedback */
+.bank-badge-copied {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  border-color: #86efac !important
 }
 
 /* ===== PRINT / SAVE AS PDF ===== */
