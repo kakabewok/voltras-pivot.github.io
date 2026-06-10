@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>API Documentation — Pivot Payment Gateway</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- ===== SIDEBAR ===== -->
+  <nav class="sidebar">
+    <div class="sidebar-title">Pivot Payment Gateway</div>
+    <div class="sidebar-title" style="font-size:10px;padding-top:0;color:#64748b">v1.1.5 · Development</div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Create VA Payment</div>
+      <a href="#va-overview">Overview</a>
+      <a href="#va-headers">Request Header</a>
+      <a href="#va-body">Request Body</a>
+      <a href="#va-json">Struktur JSON</a>
+      <a href="#va-params">Parameters</a>
+      <a href="#va-banks">Pilihan Bank</a>
+      <a href="#va-curl">Contoh Request</a>
+      <a href="#va-status">HTTP Status</a>
+      <a href="#va-response">Response</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label cyan">Payment Notification</div>
+      <a href="#notif-overview">Overview</a>
+      <a href="#notif-flow">Alur Notifikasi</a>
+      <a href="#notif-headers">Request Header</a>
+      <a href="#notif-params">Parameters</a>
+      <a href="#notif-curl">Contoh Request</a>
+      <a href="#notif-response">Response</a>
+      <a href="#notif-status">HTTP Status</a>
+      <a href="#notif-guide">Panduan Implementasi</a>
+      <a href="#notif-java">Contoh Java</a>
+      <a href="#notif-js">Contoh JavaScript</a>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+
+    <!-- ================================================================ -->
+    <!--  DOC 1: CREATE VIRTUAL ACCOUNT PAYMENT                           -->
+    <!-- ================================================================ -->
+    <div class="doc" id="doc-create-va">
+
+      <header class="doc-header" id="va-overview">
+        <div class="tag tag-indigo">POST · v1.1.5</div>
+        <h1>Create Virtual Account Payment</h1>
+        <p>http://172.16.10.51:31015/router</p>
+      </header>
+
+      <p style="margin-bottom:1.5rem;color:#475569">
+        Membuat Virtual Account (VA) untuk pembayaran pada bank yang dituju.
+        Mengembalikan nomor VA beserta detail akun dan waktu kedaluwarsa.
+      </p>
+
+      <div class="endpoint-bar">
+        <span class="badge-post">POST</span>
+        <span>http://172.16.10.51:31015</span>
+        <span style="color:#94a3b8">/router</span>
+      </div>
+
+      <div class="note note-indigo">
+        <strong>Base URL development:</strong> http://172.16.10.51:31015 &nbsp;·&nbsp;
+        Gunakan domain <code style="font-family:monospace">"sandbox"</code> untuk environment development.
+      </div>
+      <br>
+
+      <!-- Request Header -->
+      <div class="card" id="va-headers">
+        <h2>Request Header</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Header</th>
+              <th>Value</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">v-api-version</td>
+              <td class="mono">1.1.5</td>
+              <td class="muted small">Versi API yang digunakan</td>
+            </tr>
+            <tr>
+              <td class="mono">Content-Type</td>
+              <td class="mono">multipart/form-data</td>
+              <td class="muted small">Request dikirim sebagai form-data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Request Body -->
+      <div class="card" id="va-body">
+        <h2>Request Body — form-data</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">request <span class="req">required</span></td>
+              <td><span class="type">string (JSON)</span></td>
+              <td class="muted small">Form-data field. Berisi JSON string dengan service, method, dan parameters.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Struktur JSON -->
+      <div class="card" id="va-json">
+        <h2>Struktur JSON pada field "request"</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">service</td>
+              <td><span class="type">string</span></td>
+              <td class="mono small">"transactionService"</td>
+            </tr>
+            <tr>
+              <td class="mono">method</td>
+              <td><span class="type">string</span></td>
+              <td class="mono small">"createVirtualAccountPayment"</td>
+            </tr>
+            <tr>
+              <td class="mono">parameters</td>
+              <td><span class="type">array</span></td>
+              <td class="muted small">Array berurutan 5 parameter (lihat tabel di bawah)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Parameters -->
+      <div class="card" id="va-params">
+        <h2>Parameters — urutan dalam array</h2>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36px">#</th>
+              <th>Nama</th>
+              <th>Type</th>
+              <th>Keterangan</th>
+              <th>Contoh</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono center">0</td>
+              <td class="mono">domainName</td>
+              <td><span class="type">string</span></td>
+              <td class="muted small">Target domain, petakan 1:1 ke rekening bank. Gunakan "sandbox" untuk dev.</td>
+              <td class="mono small">"sandbox"</td>
+            </tr>
+            <tr>
+              <td class="mono center">1</td>
+              <td class="mono">bank</td>
+              <td><span class="type">string</span></td>
+              <td class="muted small">Nama bank tujuan VA. Lihat daftar pilihan bank.</td>
+              <td class="mono small">"Bank Central Asia"</td>
+            </tr>
+            <tr>
+              <td class="mono center">2</td>
+              <td class="mono">amount</td>
+              <td><span class="type">double</span></td>
+              <td class="muted small">Total nominal pembayaran dalam Rupiah.</td>
+              <td class="mono small">10000.0</td>
+            </tr>
+            <tr>
+              <td class="mono center">3</td>
+              <td class="mono">remark</td>
+              <td><span class="type">string</span></td>
+              <td class="muted small">Teks referensi yang tampil di UI bank (ATM / M-Banking).</td>
+              <td class="mono small">"This is remark"</td>
+            </tr>
+            <tr>
+              <td class="mono center">4</td>
+              <td class="mono">timelimit</td>
+              <td><span class="type">string</span></td>
+              <td class="muted small">Batas waktu kedaluwarsa VA. Format: <code
+                  style="font-family:monospace">yyyy-MM-dd'T'HH:mm:ss</code></td>
+              <td class="mono small">"2026-06-30T12:00:00"</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pilihan Bank -->
+      <div class="card" id="va-banks">
+        <h2>Pilihan Bank</h2>
+        <div class="bank-wrap">
+          <span class="bank-badge">Bank Rakyat Indonesia</span>
+          <span class="bank-badge">Bank Central Asia</span>
+          <span class="bank-badge">Bank Mandiri</span>
+          <span class="bank-badge">Bank Negara Indonesia</span>
+        </div>
+      </div>
+
+      <!-- Contoh Request -->
+      <div class="card" id="va-curl">
+        <h2>Contoh Request (cURL)</h2>
+        <pre class="code-block">curl --location 'http://172.16.10.51:31015/router' \
+--header 'v-api-version: 1.1.5' \
+--form 'request="{
+  \"service\": \"transactionService\",
+  \"method\": \"createVirtualAccountPayment\",
+  \"parameters\": [
+    \"sandbox\",
+    \"Bank Central Asia\",
+    10000.0,
+    \"This is remark\",
+    \"2026-06-30T12:00:00\"
+  ]
+}"'</pre>
+      </div>
+
+      <!-- HTTP Status -->
+      <div class="card" id="va-status">
+        <h2>HTTP Status Code</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Status</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="status-code s200">200</span></td>
+              <td>OK</td>
+              <td class="muted small">VA berhasil dibuat</td>
+            </tr>
+            <tr>
+              <td><span class="status-code s400">400</span></td>
+              <td>Bad Request</td>
+              <td class="muted small">Parameter tidak valid atau tidak lengkap</td>
+            </tr>
+            <tr>
+              <td><span class="status-code s500">500</span></td>
+              <td>Internal Server Error</td>
+              <td class="muted small">Terjadi kesalahan di server</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Response Fields -->
+      <div class="card" id="va-response">
+        <h2>Response Fields (200 OK)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">data.bankCode</td>
+              <td><span class="type">string</span></td>
+              <td class="muted small">Kode bank. Contoh: <code style="font-family:monospace">"014"</code> untuk BCA.
+              </td>
+            </tr>
+            <tr>
+              <td class="mono">data.bankName</td>
+              <td><span class="type">string</span></td>
+              <td class="muted small">Nama singkat bank. Contoh: <code style="font-family:monospace">"bca"</code>.</td>
+            </tr>
+            <tr>
+              <td class="mono">data.accountCode</td>
+              <td><span class="type">string</span></td>
+              <td class="muted small">Nomor Virtual Account yang dibayarkan customer.</td>
+            </tr>
+            <tr>
+              <td class="mono">data.timelimit</td>
+              <td><span class="type">string</span></td>
+              <td class="muted small">Waktu kedaluwarsa VA. Format: <code
+                  style="font-family:monospace">yyyy-MM-dd'T'HH:mm:ss</code></td>
+            </tr>
+            <tr>
+              <td class="mono">message</td>
+              <td><span class="type">string | null</span></td>
+              <td class="muted small">Pesan server. <code style="font-family:monospace">null</code> jika sukses.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-label">Contoh Response</div>
+        <pre class="code-block">{
+    "data": {
+        "bankCode":    "014",
+        "bankName":    "bca",
+        "accountCode": "1575312521362645",
+        "timelimit":   "2026-06-30T12:00:00"
+    },
+    "message": null
+}</pre>
+      </div>
+
+    </div><!-- /doc-create-va -->
+
+
+    <!-- ================================================================ -->
+    <!--  DOC 2: PAYMENT NOTIFICATION CALLBACK                            -->
+    <!-- ================================================================ -->
+    <hr class="doc-divider">
+
+    <div class="doc page-break" id="doc-notification">
+
+      <header class="doc-header" id="notif-overview">
+        <div class="tag tag-cyan">POST · Notification Callback</div>
+        <h1>Payment Notification Callback</h1>
+        <p>{Payment Callback URL} — URL dikonfigurasi per domain/client</p>
+      </header>
+
+      <p style="margin-bottom:1.5rem;color:#475569">
+        Setelah transaksi Virtual Account diproses, Payment Gateway mengirimkan notifikasi ke
+        <strong>Payment Callback URL</strong> milik client. Client wajib memvalidasi transaksi dan
+        mengembalikan <code style="font-family:monospace">true</code> (berhasil) atau
+        <code style="font-family:monospace">false</code> (gagal/tidak dikenal).
+      </p>
+
+      <div class="endpoint-bar">
+        <span class="badge-post">POST</span>
+        <span style="color:#94a3b8">{Payment Callback URL}</span>
+      </div>
+
+      <div class="note note-cyan">
+        <strong>Arah request:</strong> Payment Gateway &rarr; Client. &nbsp;&middot;&nbsp;
+        Endpoint ini diimplementasikan dan di-host oleh <strong>client</strong>, bukan oleh Payment Gateway.
+      </div>
+      <br>
+
+      <!-- Alur Notifikasi -->
+      <div class="card" id="notif-flow">
+        <h2>Alur Notifikasi</h2>
+        <div class="flow">
+          <div class="flow-step"><strong>Customer</strong>Melakukan Pembayaran VA</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step"><strong>Bank</strong>Konfirmasi ke Gateway</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step"><strong>Payment Gateway</strong>POST ke Payment Callback URL</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step"><strong>Client</strong>Validasi &amp; balas true/false</div>
+        </div>
+        <div class="note note-warn" style="margin-top:0">
+          Jika client tidak dapat dijangkau atau melempar exception, Payment Gateway mencatat status
+          <strong>gagal notifikasi</strong> dan tidak melakukan retry otomatis —
+          pastikan Payment Callback URL selalu tersedia.
+        </div>
+      </div>
+
+      <!-- Request Header -->
+      <div class="card" id="notif-headers">
+        <h2>Request Header (dikirim oleh Payment Gateway)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Header</th>
+              <th>Value</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">v-api-version</td>
+              <td class="mono">{implementationVersion}</td>
+              <td class="muted small">Versi implementasi NotificationService saat runtime. Client dapat menggunakan
+                nilai ini untuk verifikasi kompatibilitas.</td>
+            </tr>
+            <tr>
+              <td class="mono">domain</td>
+              <td class="mono">{domain}</td>
+              <td class="muted small">Identifier domain/client pemilik notifikasi ini. Gunakan untuk memvalidasi bahwa
+                notifikasi ditujukan ke domain yang benar.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Parameters -->
+      <div class="card" id="notif-params">
+        <h2>Request Parameters</h2>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36px">#</th>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Keterangan</th>
+              <th>Contoh</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono center">1</td>
+              <td class="mono">transactionId <span class="req">required</span></td>
+              <td><span class="type">string</span></td>
+              <td class="muted small">ID unik transaksi. Sesuai dengan <code
+                  style="font-family:monospace">orderId</code> pada sisi Payment Gateway.</td>
+              <td class="mono small">"TRX-20260609-001"</td>
+            </tr>
+            <tr>
+              <td class="mono center">2</td>
+              <td class="mono">amount <span class="req">required</span></td>
+              <td><span class="type">double</span></td>
+              <td class="muted small">Nominal yang dibayarkan customer dalam Rupiah. Client wajib memvalidasi nilai ini
+                sesuai dengan order yang tersimpan.</td>
+              <td class="mono small">10000.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Contoh Request cURL -->
+      <div class="card" id="notif-curl">
+        <h2>Contoh Request yang Diterima Client (cURL equivalent)</h2>
+        <pre class="code-block">curl --location --request POST 'https://client.example.com/notify' \
+--header 'v-api-version: 1.1.5' \
+--header 'domain: sandbox' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'transactionId=TRX-20260609-001' \
+--data-urlencode 'amount=10000.0'</pre>
+      </div>
+
+      <!-- Response -->
+      <div class="card" id="notif-response">
+        <h2>Response yang Diharapkan dari Client</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Value</th>
+              <th>Type</th>
+              <th>Kondisi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pill pill-true">true</span></td>
+              <td><span class="type">Boolean</span></td>
+              <td class="muted small">Notifikasi diterima dan diproses sukses. Transaksi valid, amount cocok, dan status
+                order berhasil diperbarui di sisi client.</td>
+            </tr>
+            <tr>
+              <td><span class="pill pill-false">false</span></td>
+              <td><span class="type">Boolean</span></td>
+              <td class="muted small">Notifikasi gagal diproses. Transaksi tidak ditemukan, amount tidak sesuai, atau
+                terjadi error internal di sisi client.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="note note-cyan" style="margin-top:0">
+          Jika client melempar exception <code style="font-family:monospace">TransactionNotFound</code> atau exception
+          lainnya, Payment Gateway menangkap exception tersebut dan mencatat hasil notifikasi sebagai
+          <strong>false</strong>.
+        </div>
+      </div>
+
+      <!-- HTTP Status -->
+      <div class="card" id="notif-status">
+        <h2>HTTP Status Code (dari sisi client)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Status</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="status-code s200">200</span></td>
+              <td>OK</td>
+              <td class="muted small">Request diterima. Body berisi <code style="font-family:monospace">true</code> atau
+                <code style="font-family:monospace">false</code>.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="status-code s404">404 / Exception</span></td>
+              <td>TransactionNotFound</td>
+              <td class="muted small">Transaksi tidak ditemukan. Gateway mencatat notifikasi sebagai gagal.</td>
+            </tr>
+            <tr>
+              <td><span class="status-code s400">400</span></td>
+              <td>Bad Request</td>
+              <td class="muted small">Parameter tidak lengkap atau format tidak valid.</td>
+            </tr>
+            <tr>
+              <td><span class="status-code s500">500</span></td>
+              <td>Internal Server Error</td>
+              <td class="muted small">Kesalahan internal di sisi client. Gateway mencatat notifikasi sebagai gagal.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Panduan Implementasi -->
+      <div class="card" id="notif-guide">
+        <h2>Panduan Implementasi untuk Client</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Langkah</th>
+              <th>Deskripsi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono small" style="white-space:nowrap">1. Verifikasi header domain</td>
+              <td class="muted small">Pastikan nilai header <code style="font-family:monospace">domain</code> sesuai
+                dengan domain yang terdaftar, untuk mencegah notifikasi palsu dari pihak lain.</td>
+            </tr>
+            <tr>
+              <td class="mono small" style="white-space:nowrap">2. Cari transaksi</td>
+              <td class="muted small">Cari order berdasarkan <code style="font-family:monospace">transactionId</code>.
+                Jika tidak ditemukan, lempar <code style="font-family:monospace">TransactionNotFound</code> atau
+                kembalikan <code style="font-family:monospace">false</code>.</td>
+            </tr>
+            <tr>
+              <td class="mono small" style="white-space:nowrap">3. Validasi amount</td>
+              <td class="muted small">Bandingkan nilai <code style="font-family:monospace">amount</code> dari notifikasi
+                dengan nilai yang tersimpan pada order. Tolak jika tidak sesuai.</td>
+            </tr>
+            <tr>
+              <td class="mono small" style="white-space:nowrap">4. Update status order</td>
+              <td class="muted small">Tandai order sebagai PAID atau status yang sesuai, lalu kembalikan <code
+                  style="font-family:monospace">true</code>.</td>
+            </tr>
+            <tr>
+              <td class="mono small" style="white-space:nowrap">5. Idempotency</td>
+              <td class="muted small">Pastikan endpoint bersifat idempotent — jika notifikasi yang sama diterima lebih
+                dari sekali, tidak terjadi duplikasi pemrosesan order.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Implementasi Java -->
+      <div class="card" id="notif-java">
+        <h2>Contoh Implementasi Client (Java / Spring Boot)</h2>
+        <pre class="code-block">@RestController
+public class PaymentCallbackController {
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Value("${payment.gateway.expected-domain}")
+    private String expectedDomain;
+
+    @PostMapping("/notify")
+    public Boolean notify(
+            @RequestParam String transactionId,
+            @RequestParam Double amount,
+            @RequestHeader("domain") String domain) throws TransactionNotFound {
+
+        // 1. Verifikasi domain
+        if (!expectedDomain.equals(domain)) {
+            return false;
+        }
+
+        // 2. Cari transaksi
+        Order order = orderRepository.findById(transactionId)
+                .orElseThrow(() -> new TransactionNotFound(
+                        "Transaction not found: " + transactionId));
+
+        // 3. Validasi amount
+        if (!order.getAmount().equals(amount)) {
+            log.warn("Amount mismatch for transactionId={}: expected={}, received={}",
+                    transactionId, order.getAmount(), amount);
+            return false;
+        }
+
+        // 4. Idempotency — jangan proses ulang jika sudah PAID
+        if (order.getStatus() == OrderStatus.PAID) {
+            return true;
+        }
+
+        // 5. Update status order
+        order.setStatus(OrderStatus.PAID);
+        order.setPaidAt(LocalDateTime.now());
+        orderRepository.save(order);
+
+        return true;
+    }
+}</pre>
+      </div>
+
+      <!-- Implementasi JavaScript -->
+      <div class="card" id="notif-js">
+        <h2>Contoh Implementasi Client (JavaScript / Express)</h2>
+        <pre class="code-block">const express = require('express');
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+
+app.post('/notify', async (req, res) => {
+  const { transactionId, amount } = req.body;
+  const domain = req.headers['domain'];
+
+  // 1. Verifikasi domain
+  if (domain !== process.env.EXPECTED_DOMAIN) {
+    return res.status(200).send('false');
+  }
+
+  try {
+    // 2. Cari transaksi
+    const order = await Order.findById(transactionId);
+    if (!order) {
+      return res.status(200).send('false'); // TransactionNotFound
+    }
+
+    // 3. Validasi amount
+    if (order.amount !== parseFloat(amount)) {
+      console.warn(`Amount mismatch: expected ${order.amount}, got ${amount}`);
+      return res.status(200).send('false');
+    }
+
+    // 4. Idempotency — jangan proses ulang jika sudah PAID
+    if (order.status === 'PAID') {
+      return res.status(200).send('true');
+    }
+
+    // 5. Update status order
+    await Order.updateOne(
+      { _id: transactionId },
+      { status: 'PAID', paidAt: new Date() }
+    );
+
+    return res.status(200).send('true');
+
+  } catch (err) {
+    console.error('Notification error:', err.message);
+    return res.status(200).send('false');
+  }
+});
+
+app.listen(3000);</pre>
+      </div>
+
+    </div><!-- /doc-notification -->
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
